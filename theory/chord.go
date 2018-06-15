@@ -30,8 +30,8 @@ func NewChordFromAbbrev(name string) *Chord {
 		root = append(root, name[0])
 		name = name[1:]
 	}
-	var chordRef *midi.ChordDefinition
-	for _, chordDef := range midi.ChordDefs {
+	var chordRef *ChordDefinition
+	for _, chordDef := range ChordDefs {
 		if name == chordDef.Abbrev {
 			chordRef = chordDef
 			break
@@ -76,14 +76,14 @@ func (c *Chord) String() string {
 
 // Def returns the matching chord definition with the root set if found.
 // A chord definition with a name set to Unknown will be returned if no matches found.
-func (c *Chord) Def() *midi.ChordDefinition {
+func (c *Chord) Def() *ChordDefinition {
 	if c == nil {
 		return nil
 	}
 	// TODO: consider caching that result
 	retries := len(c.Keys)
 	for retries > 0 {
-		for _, chordDef := range midi.ChordDefs {
+		for _, chordDef := range ChordDefs {
 			if c.Matches(chordDef) {
 				return chordDef.WithRoot(midi.Notes[c.Keys[0]%12])
 			}
@@ -98,11 +98,11 @@ func (c *Chord) Def() *midi.ChordDefinition {
 		retries--
 	}
 
-	return &midi.ChordDefinition{Name: "Unknown"}
+	return &ChordDefinition{Name: "Unknown"}
 }
 
 // Matches compares the current chord with the passed chord.
-func (c *Chord) Matches(chordDef *midi.ChordDefinition) bool {
+func (c *Chord) Matches(chordDef *ChordDefinition) bool {
 	if reflect.DeepEqual(chordDef.HalfSteps, c.Intervals()) {
 		// confirm the root key
 		for i := 1; i < len(chordDef.HalfSteps); i++ {
