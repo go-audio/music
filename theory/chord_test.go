@@ -69,6 +69,16 @@ func TestChord_Def(t *testing.T) {
 			toString: `B Minor - "B2, D3, F#3"`,
 		},
 		{
+			name: "Bm\n",
+			keys: []int{
+				midi.KeyInt("B", 2),
+				midi.KeyInt("D", 3),
+				midi.KeyInt("F#", 3),
+			},
+			want:     "B Minor",
+			toString: `B Minor - "B2, D3, F#3"`,
+		},
+		{
 			name: "F#m",
 			keys: []int{
 				midi.KeyInt("F#", 3),

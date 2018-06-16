@@ -20,6 +20,7 @@ type Chord struct {
 // NewChordFromAbbrev takes a chord name such as Bmin and converts it to a *Chord
 // with the root key on the 0 octave.
 func NewChordFromAbbrev(name string) *Chord {
+	name = strings.TrimSpace(name)
 	// shortest name would be a c5 or something like that
 	if len(name) < 2 {
 		return nil
@@ -80,7 +81,7 @@ func (c *Chord) Def() *ChordDefinition {
 	if c == nil {
 		return nil
 	}
-	// TODO: consider caching that result
+	// TODO: consider caching this result
 	retries := len(c.Keys)
 	for retries > 0 {
 		for _, chordDef := range ChordDefs {
