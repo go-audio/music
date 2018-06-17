@@ -79,6 +79,24 @@ func (chords Chords) RootNotes() []int {
 	return notes
 }
 
+// UniqueNotes returns an octave-less unique list of the notes used in the chords.
+func (chords Chords) UniqueNotes() []int {
+	notes := []int{}
+	mNotes := map[int]bool{}
+	for _, c := range chords {
+		for _, k := range c.Keys {
+			mNotes[k%12] = true
+		}
+	}
+	notes = make([]int, len(mNotes))
+	var i int
+	for k := range mNotes {
+		notes[i] = k
+		i++
+	}
+	return notes
+}
+
 // EligibleScales returns a list of potentially matching scales.
 // This can be used to calculate the chord progression within a scale.
 func (chords Chords) EligibleScales() Scales {
@@ -132,7 +150,7 @@ func (chords Chords) ProgressionDesc() string {
 		scaleNotes, _ := ScaleNotes(midi.Notes[scale.Root%12], scale.Def.Name)
 		romanScale := RomanNumerals[scale.Def.Name]
 		for _, note := range notes {
-			idx := sliceIndex(14, func(i int) bool { return scaleNotes[i] == note })
+			idx := sliceIndex(len(scaleNotes), func(i int) bool { return scaleNotes[i] == note })
 			if len(romanScale) > 0 {
 				out += fmt.Sprintf("%s ", romanScale[idx])
 			} else {
