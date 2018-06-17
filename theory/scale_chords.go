@@ -21,7 +21,12 @@ var RichScaleChords = map[ScaleName][][]string{
 	},
 	// TODO:
 	MelodicMinorScale: [][]string{
-		{"min"}, {"min"}, {"aug"}, {"maj"}, {"maj"}, {"mb5"}, {"mb5"},
-		{"m7"}, {"m7b5"}, {"Maj7"}, {"min7"}, {"min7"}, {"Maj7"}, {"Maj7"},
+		{"min", "m7"},
+		{"min", "m7b5"},
+		{"aug", "Maj7"},
+		{"maj", "min7"},
+		{"maj", "min7"},
+		{"mb5", "Maj7"},
+		{"mb5", "Maj7"},
 	},
 }
