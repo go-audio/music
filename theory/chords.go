@@ -58,8 +58,10 @@ func (chords Chords) String() string {
 	}
 	b := strings.Builder{}
 	for i := 0; i < len(chords)-1; i++ {
-		if len(chords[i].Keys) > 1 {
-			b.WriteString(chords[i].AbbrevName() + ",")
+		if chords[i] != nil {
+			if len(chords[i].Keys) > 1 {
+				b.WriteString(chords[i].AbbrevName() + ",")
+			}
 		}
 	}
 	lastIdx := len(chords) - 1
@@ -74,7 +76,7 @@ func (chords Chords) String() string {
 func (chords Chords) RootNotes() []int {
 	notes := make([]int, len(chords))
 	for i, c := range chords {
-		notes[i] = c.Def().RootInt()
+		notes[i] = c.Root()
 	}
 	return notes
 }

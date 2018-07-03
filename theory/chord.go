@@ -3,6 +3,7 @@ package theory
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/go-audio/midi"
@@ -15,6 +16,12 @@ type Chord struct {
 	// KeyIntervals are the half steps between each key, in most caes, you want to use Intervals().
 	KeyIntervals     []uint
 	intervalKeyCache []int
+
+	sortedRelativeKeys []int
+	// rootKey is the chord key of the chord. In the case of an inversion, the root key isn't the bass key.
+	rootKey int
+	// bassKey is the lowest key of the chord. It usually is the root, unless the chord is an inversion.
+	bassKey int
 }
 
 // NewChordFromAbbrev takes a chord name such as Bmin and converts it to a *Chord
@@ -31,21 +38,26 @@ func NewChordFromAbbrev(name string) *Chord {
 		root = append(root, name[0])
 		name = name[1:]
 	}
+	name = strings.ToLower(name)
 	var chordRef *ChordDefinition
 	for _, chordDef := range ChordDefs {
-		if name == chordDef.Abbrev {
+		if name == strings.ToLower(chordDef.Abbrev) {
 			chordRef = chordDef
 			break
 		}
 	}
 	if chordRef == nil {
+		// We probably have an inversion
+		// FIXME: reculate the interval using the second note as the first
 		return nil
 	}
 	chordRef.Root = string(root)
 	rootInt := midi.KeyInt(chordRef.Root, 0)
 	chord := &Chord{Keys: []int{rootInt}}
-	for i, interv := range chordRef.HalfSteps {
-		chord.Keys = append(chord.Keys, chord.Keys[i]+int(interv))
+	var last int
+	for _, interv := range chordRef.HalfSteps {
+		last += int(interv)
+		chord.Keys = append(chord.Keys, last)
 	}
 
 	return chord
@@ -64,6 +76,9 @@ func (c *Chord) AbbrevName() string {
 }
 
 func (c *Chord) String() string {
+	if c == nil {
+		return ""
+	}
 	// sort first
 	def := c.Def()
 	strs := make([]string, len(c.Keys))
@@ -75,6 +90,39 @@ func (c *Chord) String() string {
 		strings.Join(strs, ", "))
 }
 
+// Root returns the root key of the chord
+func (c *Chord) Root() int {
+	if c == nil {
+		return 0
+	}
+	if len(c.sortedRelativeKeys) == 0 && len(c.Keys) > 0 {
+		c.sortedRelativeKeys = make([]int, len(c.Keys))
+		sort.Ints(c.Keys)
+		c.bassKey = c.Keys[0]
+		copy(c.sortedRelativeKeys, c.Keys)
+		for i := 0; i < len(c.sortedRelativeKeys); i++ {
+			c.sortedRelativeKeys[i] = c.sortedRelativeKeys[i] % 12
+		}
+		sort.Ints(c.sortedRelativeKeys)
+		c.rootKey = c.sortedRelativeKeys[0]
+	}
+
+	return c.rootKey
+}
+
+// Bass returns the bass key of the chord
+func (c *Chord) Bass() int {
+	if c == nil {
+		return 0
+	}
+
+	if len(c.sortedRelativeKeys) == 0 && len(c.Keys) > 0 {
+		c.Root()
+	}
+
+	return c.bassKey
+}
+
 // Def returns the matching chord definition with the root set if found.
 // A chord definition with a name set to Unknown will be returned if no matches found.
 func (c *Chord) Def() *ChordDefinition {
@@ -82,11 +130,12 @@ func (c *Chord) Def() *ChordDefinition {
 		return nil
 	}
 	// TODO: consider caching this result
+	sort.Ints(c.Keys)
 	retries := len(c.Keys)
 	for retries > 0 {
 		for _, chordDef := range ChordDefs {
 			if c.Matches(chordDef) {
-				return chordDef.WithRoot(midi.Notes[c.Keys[0]%12])
+				return chordDef.WithRoot(midi.Notes[c.Root()])
 			}
 		}
 		// we didn't find the chord, let's try to change the interval orders
@@ -99,19 +148,18 @@ func (c *Chord) Def() *ChordDefinition {
 		retries--
 	}
 
+	// TODO: check for inversions (the root note isn't the bass note)
+	// Sort the notes to be in order
+	// check for a match on the new intervals
+	// If there's a match, calculate the inversion (distance order from bass to the root note)
+	// add a ^ to the chord per inversion #.
+
 	return &ChordDefinition{Name: "Unknown"}
 }
 
 // Matches compares the current chord with the passed chord.
 func (c *Chord) Matches(chordDef *ChordDefinition) bool {
 	if reflect.DeepEqual(chordDef.HalfSteps, c.Intervals()) {
-		// confirm the root key
-		for i := 1; i < len(chordDef.HalfSteps); i++ {
-			if uint(c.Keys[i-1]) != chordDef.HalfSteps[i] {
-				// not the root key
-				continue
-			}
-		}
 		return true
 	}
 	return false
@@ -119,14 +167,17 @@ func (c *Chord) Matches(chordDef *ChordDefinition) bool {
 
 // Intervals returns the intervals in betwen notes, duplicated notes are removed.
 func (c *Chord) Intervals() []uint {
+	if c == nil {
+		return nil
+	}
 	if c.isIntervalCacheValid() {
 		return c.KeyIntervals
 	}
 
-	keys := c.Keys
+	c.Root()
 	// remove duplicate notes (including those played on different octaves)
 	seenKeys := map[int]bool{}
-	keys = []int{}
+	keys := []int{}
 	var pitch int
 	for _, k := range c.Keys {
 		pitch = k % 12

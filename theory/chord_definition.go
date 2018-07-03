@@ -16,8 +16,10 @@ type ChordDefinition struct {
 	Name string
 	// Abbrev is the English abbreviation for the chord
 	Abbrev string
-	// HalfSteps are the number of half steps between the chord's notes
+	// HalfSteps are the number of half steps between the chord's notes (semitones)
 	HalfSteps []uint
+	// Inversion indicates the indication number if the root note isn't the bass note.
+	Inversion int
 }
 
 // WithRoot returns a copy of the chord definition with the chord root set.
@@ -40,8 +42,17 @@ func (cd *ChordDefinition) RootInt() int {
 }
 
 func (cd *ChordDefinition) String() string {
+	if cd == nil {
+		return ""
+	}
 	if len(cd.Root) > 0 {
-		return fmt.Sprintf("%s %s", strings.ToUpper(cd.Root), cd.Name)
+		out := fmt.Sprintf("%s %s", strings.ToUpper(cd.Root), cd.Name)
+		if cd.Inversion > 0 {
+			for i := 0; i < cd.Inversion; i++ {
+				out += "^"
+			}
+		}
+		return out
 	}
 	return cd.Name
 }
@@ -52,10 +63,12 @@ var (
 		{
 			Name: "Major", Abbrev: "maj",
 			HalfSteps: []uint{4, 3},
+			// 1, 3, 5
 		},
 		{
 			Name: "Minor", Abbrev: "min",
 			HalfSteps: []uint{3, 4},
+			// 1, b3, 5
 		},
 		{
 			Name: "Diminished", Abbrev: "mb5",
@@ -75,7 +88,7 @@ var (
 			Name: "Minor Seventh", Abbrev: "m7", HalfSteps: []uint{3, 4, 3},
 		},
 		{
-			Name: "Major Seventh", Abbrev: "Maj7", HalfSteps: []uint{4, 3, 4},
+			Name: "Major Seventh", Abbrev: "maj7", HalfSteps: []uint{4, 3, 4},
 		},
 		{
 			Name: "Seventh", Abbrev: "7", HalfSteps: []uint{4, 3, 3},
