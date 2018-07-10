@@ -3,6 +3,7 @@ package theory
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/go-audio/midi"
@@ -81,6 +82,7 @@ func (c *Chord) Def() *ChordDefinition {
 	if c == nil {
 		return nil
 	}
+	var sorted bool
 	// TODO: consider caching this result
 	retries := len(c.Keys)
 	for retries > 0 {
@@ -93,9 +95,12 @@ func (c *Chord) Def() *ChordDefinition {
 		if len(c.Keys) < 2 {
 			break
 		}
-		// fmt.Println("failed to find chord for", keysToNotes(c.Keys), intervals)
+		if !sorted {
+			sort.Ints(c.Keys)
+			sorted = true
+			continue
+		}
 		c.Keys = append(c.Keys[1:], c.Keys[0])
-		// fmt.Println("swapping keys", keysToNotes(c.Keys), intervals)
 		retries--
 	}
 

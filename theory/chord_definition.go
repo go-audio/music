@@ -262,7 +262,7 @@ var (
 			Name: "Major Thirteenth", Abbrev: "Maj13", HalfSteps: []uint{4, 3, 4, 3, 7},
 		},
 		{
-			Name: "Minor Thirteenth", Abbrev: "m13", HalfSteps: []uint{3, 4, 3, 4, 7},
+			Name: "Minor Thirteenth", Abbrev: "min13", HalfSteps: []uint{3, 4, 3, 4, 7},
 		},
 		{
 			Name: "Minor Major Thirteenth", Abbrev: "m-Maj13", HalfSteps: []uint{3, 4, 4, 3, 7},
