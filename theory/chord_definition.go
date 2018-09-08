@@ -75,6 +75,9 @@ var (
 			Name: "Minor Seventh", Abbrev: "m7", HalfSteps: []uint{3, 4, 3},
 		},
 		{
+			Name: "Minor Seventh", Abbrev: "min7", HalfSteps: []uint{3, 4, 3},
+		},
+		{
 			Name: "Major Seventh", Abbrev: "Maj7", HalfSteps: []uint{4, 3, 4},
 		},
 		{
@@ -113,7 +116,13 @@ var (
 			Name: "Minor Sixth", Abbrev: "m6", HalfSteps: []uint{3, 4, 2},
 		},
 		{
+			Name: "Minor Sixth", Abbrev: "min6", HalfSteps: []uint{3, 4, 2},
+		},
+		{
 			Name: "Minor Sixth 9th", Abbrev: "m6add9", HalfSteps: []uint{3, 4, 2, 5},
+		},
+		{
+			Name: "Minor Sixth 9th", Abbrev: "min6add9", HalfSteps: []uint{3, 4, 2, 5},
 		},
 		// 7th
 		{
