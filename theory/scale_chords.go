@@ -29,4 +29,14 @@ var RichScaleChords = map[ScaleName][][]string{
 		{"mb5", "Maj7"},
 		{"mb5", "Maj7"},
 	},
+	//
+	NaturalMinorScale: [][]string{
+		{"min", "m7"},
+		{"min", "m7b5"},
+		{"aug", "Maj7"},
+		{"maj", "min7"},
+		{"maj", "min7"},
+		{"mb5", "Maj7"},
+		{"mb5", "Maj7"},
+	},
 }
