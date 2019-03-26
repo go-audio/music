@@ -37,6 +37,14 @@ func main() {
 		}
 		os.Exit(1)
 	}
-	_, noteNames := theory.ScaleNotes(tonic, scale.Name)
+	noteInts, noteNames := theory.ScaleNotes(tonic, scale.Name)
 	fmt.Printf("Notes in %s %s: %v\n", tonic, scale.Name, noteNames)
+	fmt.Printf("Key indexes in %s %s: %v\n", tonic, scale.Name, noteInts)
+	fmt.Println()
+
+	// var notes = []string{"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"}
+	// for _, tonic := range notes {
+	// 	ints, _ := theory.ScaleNotes(tonic, "Major")
+	// 	fmt.Printf("%s major: %v\n", tonic, ints)
+	// }
 }
