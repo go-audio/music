@@ -32,6 +32,43 @@ func (s *Scale) AdjustedNote(note int) int {
 	return note + s.OffsetForNote(note)
 }
 
+// TriadChordForRoot returns the notes making the triad chord matching the
+// passed root. The root is included in the returned 3 notes.
+func (s *Scale) TriadChordForRoot(note int) *Chord {
+	chord := &Chord{Keys: []int{note}}
+	if s == nil {
+		return chord
+	}
+	chordsInScale := ScaleChords[s.Def.Name]
+	if chordsInScale == nil {
+		// unsupported scale
+		return chord
+	}
+	// find the position of the root in the scale
+	modKey := note % 12
+	inScaleNotes := s.Def.NotesInScale()
+	var idx int
+	for i := 0; i < len(inScaleNotes); i++ {
+		if modKey == inScaleNotes[i] {
+			idx = i
+			break
+		}
+	}
+	// get the triad chord def abbrev
+	chordType := chordsInScale[idx][0]
+	for _, chordDef := range ChordDefs {
+		if chordDef.Abbrev == chordType {
+			lastNoteInChord := note
+			for _, halfStep := range chordDef.HalfSteps {
+				lastNoteInChord += int(halfStep)
+				chord.Keys = append(chord.Keys, lastNoteInChord)
+			}
+			break
+		}
+	}
+	return chord
+}
+
 func (s *Scale) String() string {
 	return fmt.Sprintf("%s %s", midi.Notes[s.Root%12], s.Def.Name)
 }

@@ -146,3 +146,32 @@ func TestScale_AdjustedNote(t *testing.T) {
 		})
 	}
 }
+
+func TestScale_TriadChordForRoot(t *testing.T) {
+	tests := []struct {
+		name      string
+		scale     *Scale
+		inputNote int
+		want      *Chord
+	}{
+		{
+			name:      "C3 in C Major",
+			scale:     &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
+			inputNote: midi.KeyInt("C", 3),
+			want:      &Chord{Keys: []int{60, 64, 67}},
+		},
+		{
+			name:      "C3 in C Minor",
+			scale:     &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
+			inputNote: midi.KeyInt("C", 3),
+			want:      &Chord{Keys: []int{60, 63, 67}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.scale.TriadChordForRoot(tt.inputNote); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Scale.TriadChordForRoot() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

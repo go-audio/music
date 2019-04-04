@@ -13,7 +13,22 @@ type ScaleDefinition struct {
 	Name      ScaleName
 	HalfSteps []int
 	// InScale indicate what notes are in and which aren't
-	InScale [12]bool
+	InScale     [12]bool
+	_scaleNotes []int // cache
+}
+
+// NotesInScale returns the index 0 base 12 notes/keys within the scale
+func (def ScaleDefinition) NotesInScale() []int {
+	if len(def._scaleNotes) > 0 {
+		return def._scaleNotes
+	}
+	def._scaleNotes = []int{}
+	for i := 0; i < 12; i++ {
+		if def.InScale[i] {
+			def._scaleNotes = append(def._scaleNotes, i)
+		}
+	}
+	return def._scaleNotes
 }
 
 // ScaleDefinitions is a type representing slice of scale definitions
@@ -34,7 +49,9 @@ func (def ScaleDefinitions) Popular() ScaleDefinitions {
 type ScaleName string
 
 const (
-	MajorScale           ScaleName = "Major"
+	MajorScale        ScaleName = "Major"
+	NaturalMinorScale ScaleName = "Natural Minor"
+
 	HarmonicMinorScale   ScaleName = "Harmonic Minor"
 	MelodicMinorScale    ScaleName = "Melodic Minor"
 	WholeToneScale       ScaleName = "Whole Tone"
@@ -54,7 +71,6 @@ const (
 	PhrygianScale        ScaleName = "Phrygian"
 	LydianScale          ScaleName = "Lydian"
 	MixolydianScale      ScaleName = "Mixolydian"
-	NaturalMinorScale    ScaleName = "Natural Minor"
 	// LocrianScale represents the Locrian, or Hypodorian track https://en.wikipedia.org/wiki/Locrian_mode
 	LocrianScale ScaleName = "Locrian"
 )

@@ -42,3 +42,29 @@ func TestScaleDefMap(t *testing.T) {
 		t.Fatalf("Expected the major scale to list notes that are in or out of the scale")
 	}
 }
+
+func TestScaleDefinition_NotesInScale(t *testing.T) {
+	tests := []struct {
+		name string
+		def  ScaleDefinition
+		want []int
+	}{
+		{
+			name: "Major",
+			def:  ScaleDefMap[MajorScale],
+			want: []int{0, 2, 4, 5, 7, 9, 11},
+		},
+		{
+			name: "Minor",
+			def:  ScaleDefMap[NaturalMinorScale],
+			want: []int{0, 2, 3, 5, 7, 8, 10},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.def.NotesInScale(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ScaleDefinition.NotesInScale() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

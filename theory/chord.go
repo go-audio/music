@@ -13,7 +13,7 @@ import (
 type Chord struct {
 	// Keys are the MIDI note values for the voicing used in the chord.
 	Keys []int
-	// KeyIntervals are the half steps between each key, in most caes, you want to use Intervals().
+	// KeyIntervals are the half steps between each key, in most cases, you want to use Intervals().
 	KeyIntervals     []uint
 	intervalKeyCache []int
 }
