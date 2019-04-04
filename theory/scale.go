@@ -13,6 +13,25 @@ type Scale struct {
 	Def  ScaleDefinition
 }
 
+// OffsetForNote returns the offset to apply to an incoming note so it stays in
+// scale. This is used to keep input notes within the scale (by moving the note
+// to the closed lower note in scale).
+func (s *Scale) OffsetForNote(note int) int {
+	if s == nil {
+		return 0
+	}
+	index := (((note % 12) + 12) - (s.Root % 12)) % 12
+	if s.Def.InScale[index] {
+		return 0
+	}
+	return -1
+}
+
+// AdjustedNote "corrects" the input note to be in scale.
+func (s *Scale) AdjustedNote(note int) int {
+	return note + s.OffsetForNote(note)
+}
+
 func (s *Scale) String() string {
 	return fmt.Sprintf("%s %s", midi.Notes[s.Root%12], s.Def.Name)
 }

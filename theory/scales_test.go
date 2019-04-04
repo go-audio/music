@@ -36,3 +36,9 @@ func TestScaleNotes(t *testing.T) {
 		})
 	}
 }
+
+func TestScaleDefMap(t *testing.T) {
+	if ScaleDefMap[MajorScale].InScale != [12]bool{true, false, true, false, true, true, false, true, false, true, false, true} {
+		t.Fatalf("Expected the major scale to list notes that are in or out of the scale")
+	}
+}

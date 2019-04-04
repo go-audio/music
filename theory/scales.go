@@ -12,6 +12,8 @@ type ScaleDefinition struct {
 	Greek     bool
 	Name      ScaleName
 	HalfSteps []int
+	// InScale indicate what notes are in and which aren't
+	InScale [12]bool
 }
 
 // ScaleDefinitions is a type representing slice of scale definitions
@@ -60,56 +62,64 @@ const (
 var (
 	// ScaleDefs list all known scales
 	ScaleDefs = []ScaleDefinition{
-		{Name: MajorScale, HalfSteps: []int{2, 2, 1, 2, 2, 2}, Popular: true},
-		{Name: HarmonicMinorScale, HalfSteps: []int{2, 1, 2, 2, 1, 3}},
-		{Name: MelodicMinorScale, HalfSteps: []int{2, 1, 2, 2, 2, 2}},
-		{Name: WholeToneScale, HalfSteps: []int{2, 2, 2, 2, 2}},
-		{Name: DiminishedScale, HalfSteps: []int{2, 1, 2, 1, 2, 1, 2}},
-		{Name: MajorPentatonicScale, HalfSteps: []int{2, 2, 3, 2}},
-		{Name: MinorPentatonicScale, HalfSteps: []int{3, 2, 2, 3}, Popular: true},
-		{Name: DorianScale, HalfSteps: []int{2, 1, 2, 2, 2, 1}, Greek: true},
-		//
-		{Name: JapInSenScale, HalfSteps: []int{1, 4, 2, 3}},
-		{Name: MajorBebopScale, HalfSteps: []int{2, 2, 1, 2, 1, 1, 2}},
-		{Name: DominantBebopScale, HalfSteps: []int{2, 2, 1, 2, 2, 1, 1}},
-		{Name: BluesScale, HalfSteps: []int{3, 2, 1, 1, 3}, Popular: true},
-		{Name: ArabicScale, HalfSteps: []int{1, 3, 1, 2, 1, 3}},
-		{Name: EnigmaticScale, HalfSteps: []int{1, 3, 2, 2, 2, 1}},
-		{Name: NeapolitanScale, HalfSteps: []int{1, 2, 2, 2, 2, 2}},
-		{Name: NeapolitanMinorScale, HalfSteps: []int{1, 2, 2, 2, 1, 3}},
-		{Name: HungarianMinorScale, HalfSteps: []int{2, 1, 3, 1, 1, 3}},
-		{Name: PhrygianScale, HalfSteps: []int{1, 2, 2, 2, 1, 2}, Greek: true},
-		{Name: LydianScale, HalfSteps: []int{2, 2, 2, 1, 2, 2}},
-		{Name: MixolydianScale, HalfSteps: []int{2, 2, 1, 2, 2, 1}},
-		{Name: NaturalMinorScale, HalfSteps: []int{2, 1, 2, 2, 1, 2}, Popular: true}, // AKA aeolian
-		{Name: LocrianScale, HalfSteps: []int{1, 2, 2, 1, 2, 2}, Greek: true},
+		0: {Name: MajorScale,
+			HalfSteps: []int{2, 2, 1, 2, 2, 2},
+			InScale:   [12]bool{true, false, true, false, true, true, false, true, false, true, false, true},
+			Popular:   true,
+		},
+		1: {Name: NaturalMinorScale, // AKA aeolian
+			HalfSteps: []int{2, 1, 2, 2, 1, 2},
+			InScale:   [12]bool{true, false, true, true, false, true, false, true, true, false, true, false},
+			Popular:   true,
+		},
+		2:  {Name: HarmonicMinorScale, HalfSteps: []int{2, 1, 2, 2, 1, 3}},
+		3:  {Name: MelodicMinorScale, HalfSteps: []int{2, 1, 2, 2, 2, 2}},
+		4:  {Name: WholeToneScale, HalfSteps: []int{2, 2, 2, 2, 2}},
+		5:  {Name: DiminishedScale, HalfSteps: []int{2, 1, 2, 1, 2, 1, 2}},
+		6:  {Name: MajorPentatonicScale, HalfSteps: []int{2, 2, 3, 2}},
+		7:  {Name: MinorPentatonicScale, HalfSteps: []int{3, 2, 2, 3}, Popular: true},
+		8:  {Name: DorianScale, HalfSteps: []int{2, 1, 2, 2, 2, 1}, Greek: true},
+		9:  {Name: JapInSenScale, HalfSteps: []int{1, 4, 2, 3}},
+		10: {Name: MajorBebopScale, HalfSteps: []int{2, 2, 1, 2, 1, 1, 2}},
+		11: {Name: DominantBebopScale, HalfSteps: []int{2, 2, 1, 2, 2, 1, 1}},
+		12: {Name: BluesScale, HalfSteps: []int{3, 2, 1, 1, 3}, Popular: true},
+		13: {Name: ArabicScale, HalfSteps: []int{1, 3, 1, 2, 1, 3}},
+		14: {Name: EnigmaticScale, HalfSteps: []int{1, 3, 2, 2, 2, 1}},
+		15: {Name: NeapolitanScale, HalfSteps: []int{1, 2, 2, 2, 2, 2}},
+		16: {Name: NeapolitanMinorScale, HalfSteps: []int{1, 2, 2, 2, 1, 3}},
+		17: {Name: HungarianMinorScale, HalfSteps: []int{2, 1, 3, 1, 1, 3}},
+		18: {Name: PhrygianScale, HalfSteps: []int{1, 2, 2, 2, 1, 2}, Greek: true},
+		19: {Name: LydianScale, HalfSteps: []int{2, 2, 2, 1, 2, 2}},
+		20: {Name: MixolydianScale, HalfSteps: []int{2, 2, 1, 2, 2, 1}},
+		21: {Name: LocrianScale, HalfSteps: []int{1, 2, 2, 1, 2, 2}, Greek: true},
 	}
 
 	// ScaleDefMap is a map of the available scales
 	ScaleDefMap = map[ScaleName]ScaleDefinition{
-		MajorScale:           {Name: MajorScale, HalfSteps: []int{2, 2, 1, 2, 2, 2}, Popular: true},
-		HarmonicMinorScale:   {Name: HarmonicMinorScale, HalfSteps: []int{2, 1, 2, 2, 1, 3}},
-		MelodicMinorScale:    {Name: MelodicMinorScale, HalfSteps: []int{2, 1, 2, 2, 2, 2}},
-		WholeToneScale:       {Name: WholeToneScale, HalfSteps: []int{2, 2, 2, 2, 2}},
-		DiminishedScale:      {Name: DiminishedScale, HalfSteps: []int{2, 1, 2, 1, 2, 1, 2}},
-		MajorPentatonicScale: {Name: MajorPentatonicScale, HalfSteps: []int{2, 2, 3, 2}},
-		MinorPentatonicScale: {Name: MinorPentatonicScale, HalfSteps: []int{3, 2, 2, 3}, Popular: true},
-		DorianScale:          {Name: DorianScale, HalfSteps: []int{2, 1, 2, 2, 2, 1}, Greek: true},
+		MajorScale:        ScaleDefs[0],
+		NaturalMinorScale: ScaleDefs[1],
 		//
-		JapInSenScale:        {Name: JapInSenScale, HalfSteps: []int{1, 4, 2, 3}},
-		MajorBebopScale:      {Name: MajorBebopScale, HalfSteps: []int{2, 2, 1, 2, 1, 1, 2}},
-		DominantBebopScale:   {Name: DominantBebopScale, HalfSteps: []int{2, 2, 1, 2, 2, 1, 1}},
-		BluesScale:           {Name: BluesScale, HalfSteps: []int{3, 2, 1, 1, 3}, Popular: true},
-		ArabicScale:          {Name: ArabicScale, HalfSteps: []int{1, 3, 1, 2, 1, 3}},
-		EnigmaticScale:       {Name: EnigmaticScale, HalfSteps: []int{1, 3, 2, 2, 2, 1}},
-		NeapolitanScale:      {Name: NeapolitanScale, HalfSteps: []int{1, 2, 2, 2, 2, 2}},
-		NeapolitanMinorScale: {Name: NeapolitanMinorScale, HalfSteps: []int{1, 2, 2, 2, 1, 3}},
-		HungarianMinorScale:  {Name: HungarianMinorScale, HalfSteps: []int{2, 1, 3, 1, 1, 3}},
-		PhrygianScale:        {Name: PhrygianScale, HalfSteps: []int{1, 2, 2, 2, 1, 2}, Greek: true},
-		LydianScale:          {Name: LydianScale, HalfSteps: []int{2, 2, 2, 1, 2, 2}},
-		MixolydianScale:      {Name: MixolydianScale, HalfSteps: []int{2, 2, 1, 2, 2, 1}},
-		NaturalMinorScale:    {Name: NaturalMinorScale, HalfSteps: []int{2, 1, 2, 2, 1, 2}, Popular: true}, // AKA aeolian
-		LocrianScale:         {Name: LocrianScale, HalfSteps: []int{1, 2, 2, 1, 2, 2}, Greek: true},
+		HarmonicMinorScale:   ScaleDefs[2],
+		MelodicMinorScale:    ScaleDefs[3],
+		WholeToneScale:       ScaleDefs[4],
+		DiminishedScale:      ScaleDefs[5],
+		MajorPentatonicScale: ScaleDefs[6],
+		MinorPentatonicScale: ScaleDefs[7],
+		DorianScale:          ScaleDefs[8],
+		//
+		JapInSenScale:        ScaleDefs[9],
+		MajorBebopScale:      ScaleDefs[10],
+		DominantBebopScale:   ScaleDefs[11],
+		BluesScale:           ScaleDefs[12],
+		ArabicScale:          ScaleDefs[13],
+		EnigmaticScale:       ScaleDefs[14],
+		NeapolitanScale:      ScaleDefs[15],
+		NeapolitanMinorScale: ScaleDefs[16],
+		HungarianMinorScale:  ScaleDefs[17],
+		PhrygianScale:        ScaleDefs[18],
+		LydianScale:          ScaleDefs[19],
+		MixolydianScale:      ScaleDefs[20],
+		LocrianScale:         ScaleDefs[21],
 	}
 )
 
