@@ -32,9 +32,24 @@ func (s *Scale) AdjustedNote(note int) int {
 	return note + s.OffsetForNote(note)
 }
 
-// TriadChordForRoot returns the notes making the triad chord matching the
-// passed root. The root is included in the returned 3 notes.
+// TriadChordForRoot returns the triad chord (3 note) matching the passed root.
 func (s *Scale) TriadChordForRoot(note int) *Chord {
+	return s.chordForRoot(note, 3)
+}
+
+// SeventhChordForRoot returns the 7th chord (4 notes) of the scale using the
+// passed root.
+func (s *Scale) SeventhChordForRoot(note int) *Chord {
+	return s.chordForRoot(note, 4)
+}
+
+// NinthChordForRoot returns the 7th chord (4 notes) of the scale using the
+// passed root.
+func (s *Scale) NinthChordForRoot(note int) *Chord {
+	return s.chordForRoot(note, 5)
+}
+
+func (s *Scale) chordForRoot(note int, nbrNotesInChord uint) *Chord {
 	chord := &Chord{Keys: []int{note}}
 	if s == nil {
 		return chord
@@ -54,8 +69,15 @@ func (s *Scale) TriadChordForRoot(note int) *Chord {
 			break
 		}
 	}
-	// get the triad chord def abbrev
-	chordType := chordsInScale[idx][0]
+	var chordTypeIdx int
+	if nbrNotesInChord < 4 {
+		chordTypeIdx = 0 // triad
+	} else if nbrNotesInChord == 4 {
+		chordTypeIdx = 1 // 7th
+	} else {
+		chordTypeIdx = 2 // 9th
+	}
+	chordType := chordsInScale[idx][chordTypeIdx]
 	for _, chordDef := range ChordDefs {
 		if chordDef.Abbrev == chordType {
 			lastNoteInChord := note
@@ -65,6 +87,9 @@ func (s *Scale) TriadChordForRoot(note int) *Chord {
 			}
 			break
 		}
+	}
+	if nbrNotesInChord < 3 {
+		chord.Keys = chord.Keys[:nbrNotesInChord]
 	}
 	return chord
 }

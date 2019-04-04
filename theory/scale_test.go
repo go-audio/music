@@ -149,28 +149,107 @@ func TestScale_AdjustedNote(t *testing.T) {
 
 func TestScale_TriadChordForRoot(t *testing.T) {
 	tests := []struct {
-		name      string
-		scale     *Scale
-		inputNote int
-		want      *Chord
+		name          string
+		scale         *Scale
+		inputNote     int
+		want          *Chord
+		wantChordName string
 	}{
 		{
-			name:      "C3 in C Major",
-			scale:     &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
-			inputNote: midi.KeyInt("C", 3),
-			want:      &Chord{Keys: []int{60, 64, 67}},
+			name:          "C3 in C Major",
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
+			inputNote:     midi.KeyInt("C", 3),
+			want:          &Chord{Keys: []int{60, 64, 67}},
+			wantChordName: "C Major",
 		},
 		{
-			name:      "C3 in C Minor",
-			scale:     &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
-			inputNote: midi.KeyInt("C", 3),
-			want:      &Chord{Keys: []int{60, 63, 67}},
+			name:          "C3 in C Minor",
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
+			inputNote:     midi.KeyInt("C", 3),
+			want:          &Chord{Keys: []int{60, 63, 67}},
+			wantChordName: "C Minor",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.scale.TriadChordForRoot(tt.inputNote); !reflect.DeepEqual(got, tt.want) {
+			got := tt.scale.TriadChordForRoot(tt.inputNote)
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Scale.TriadChordForRoot() = %v, want %v", got, tt.want)
+			}
+			if got.Def().String() != tt.wantChordName {
+				t.Errorf("Scale.TriadChordForRoot() = %v, want %v", got.Def().String(), tt.wantChordName)
+			}
+		})
+	}
+}
+
+func TestScale_SeventhChordForRoot(t *testing.T) {
+	tests := []struct {
+		name          string
+		scale         *Scale
+		inputNote     int
+		want          *Chord
+		wantChordName string
+	}{
+		{
+			name:          "C3 in C Major",
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
+			inputNote:     midi.KeyInt("C", 3),
+			want:          &Chord{Keys: []int{60, 64, 67, 71}},
+			wantChordName: "C Major Seventh",
+		},
+		{
+			name:          "C3 in C Minor",
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
+			inputNote:     midi.KeyInt("C", 3),
+			want:          &Chord{Keys: []int{60, 63, 67, 70}},
+			wantChordName: "C Minor Seventh",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.scale.SeventhChordForRoot(tt.inputNote)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Scale.SeventhChordForRoot() = %v, want %v", got, tt.want)
+			}
+			if got.Def().String() != tt.wantChordName {
+				t.Errorf("Scale.SeventhChordForRoot() = %v, want %v", got.Def().String(), tt.wantChordName)
+			}
+		})
+	}
+}
+
+func TestScale_NinthChordForRoot(t *testing.T) {
+	tests := []struct {
+		name          string
+		scale         *Scale
+		inputNote     int
+		want          *Chord
+		wantChordName string
+	}{
+		{
+			name:          "C3 in C Major",
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
+			inputNote:     midi.KeyInt("C", 3),
+			want:          &Chord{Keys: []int{60, 64, 67, 71, 74}},
+			wantChordName: "C Major Ninth",
+		},
+		{
+			name:          "C3 in C Minor",
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
+			inputNote:     midi.KeyInt("C", 3),
+			want:          &Chord{Keys: []int{60, 63, 67, 70, 74}},
+			wantChordName: "C Minor Ninth",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.scale.NinthChordForRoot(tt.inputNote)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Scale.NinthChordForRoot() = %v, want %v", got, tt.want)
+			}
+			if got.Def().String() != tt.wantChordName {
+				t.Errorf("Scale.NinthChordForRoot() = %v, want %v", got.Def().String(), tt.wantChordName)
 			}
 		})
 	}
