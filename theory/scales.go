@@ -98,7 +98,7 @@ var (
 		9:  {Name: JapInSenScale, HalfSteps: []int{1, 4, 2, 3}},
 		10: {Name: MajorBebopScale, HalfSteps: []int{2, 2, 1, 2, 1, 1, 2}},
 		11: {Name: DominantBebopScale, HalfSteps: []int{2, 2, 1, 2, 2, 1, 1}},
-		12: {Name: BluesScale, HalfSteps: []int{3, 2, 1, 1, 3}, Popular: true},
+		12: {Name: BluesScale, HalfSteps: []int{3, 2, 1, 1, 3}},
 		13: {Name: ArabicScale, HalfSteps: []int{1, 3, 1, 2, 1, 3}},
 		14: {Name: EnigmaticScale, HalfSteps: []int{1, 3, 2, 2, 2, 1}},
 		15: {Name: NeapolitanScale, HalfSteps: []int{1, 2, 2, 2, 2, 2}},

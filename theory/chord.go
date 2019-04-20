@@ -84,6 +84,8 @@ func (c *Chord) Def() *ChordDefinition {
 	}
 	var sorted bool
 	// TODO: consider caching this result
+
+	// TODO: look at the keys without the registers first
 	retries := len(c.Keys)
 	for retries > 0 {
 		for _, chordDef := range ChordDefs {
