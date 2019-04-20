@@ -301,21 +301,21 @@ func TestScale_IndexOfNote(t *testing.T) {
 			root: midi.KeyInt("D#", 0),
 			def:  ScaleDefMap[NaturalMinorScale],
 			note: midi.KeyInt("D#", 3),
-			want: 1, // index 1
+			want: 0, // index 0
 		},
 		{
 			name: "out of scale key in D# Minor",
 			root: midi.KeyInt("D#", 0),
 			def:  ScaleDefMap[NaturalMinorScale],
 			note: midi.KeyInt("C", 3),
-			want: 0, // not there
+			want: -1, // not there
 		},
 		{
 			name: "F# in D# Minor",
 			root: midi.KeyInt("D#", 0),
 			def:  ScaleDefMap[NaturalMinorScale],
 			note: midi.KeyInt("F#", 3),
-			want: 3,
+			want: 2,
 		},
 	}
 	for _, tt := range tests {

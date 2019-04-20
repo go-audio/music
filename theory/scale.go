@@ -39,19 +39,19 @@ func (s *Scale) Notes() []int {
 	return ints
 }
 
-// IndexOfNote returns the position of the note in the scale starting at index 1.
+// IndexOfNote returns the position of the note in the scale starting at index 0 (scale degree).
 func (s *Scale) IndexOfNote(note int) int {
 	if s == nil {
-		return 0
+		return -1
 	}
 	notes := s.Notes()
 	note = note % 12
 	for i, n := range notes {
 		if n == note {
-			return i + 1
+			return i
 		}
 	}
-	return 0
+	return -1
 }
 
 // TriadChordForRoot returns the triad chord (3 note) matching the passed root.
