@@ -23,6 +23,11 @@ func TestScaleNotes(t *testing.T) {
 			wantKeys:  []int{0, 2, 3, 5, 7, 9, 11},
 			wantNames: []string{`C`, `D`, `D#`, `F`, `G`, `A`, `B`},
 		},
+		{
+			name: "B Major", tonic: "b", scale: MajorScale,
+			wantKeys:  []int{11, 1, 3, 4, 6, 8, 10},
+			wantNames: []string{`B`, `C#`, `D#`, `E`, `F#`, `G#`, `A#`},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

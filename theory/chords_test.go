@@ -320,9 +320,7 @@ func TestChords_ProgressionDesc(t *testing.T) {
 					},
 				},
 			},
-			want: "B D F# E \n" +
-				`i° bIII V IV  in B Blues
-i III v iv  in B Minor Pentatonic
+			want: "B D F# E \n" + `i III v iv  in B Minor Pentatonic
 i III v iv  in B Natural Minor
 vi I iii ii  in D Major
 v VII ii° i  in E Natural Minor

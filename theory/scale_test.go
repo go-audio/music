@@ -254,3 +254,79 @@ func TestScale_NinthChordForRoot(t *testing.T) {
 		})
 	}
 }
+
+func TestScale_Notes(t *testing.T) {
+	tests := []struct {
+		name string
+		root int
+		def  ScaleDefinition
+		want []int
+	}{
+		{
+			name: "C Major",
+			root: 0,
+			def:  ScaleDefMap[MajorScale],
+			want: []int{0, 2, 4, 5, 7, 9, 11},
+		},
+		{
+			name: "D# Minor",
+			root: 3,
+			def:  ScaleDefMap[NaturalMinorScale],
+			want: []int{3, 5, 6, 8, 10, 11, 1},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &Scale{
+				Root: tt.root,
+				Def:  tt.def,
+			}
+			if got := s.Notes(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Scale.Notes() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestScale_IndexOfNote(t *testing.T) {
+	tests := []struct {
+		name string
+		root int
+		def  ScaleDefinition
+		note int
+		want int
+	}{
+		{
+			name: "D# 3 in D# Minor",
+			root: midi.KeyInt("D#", 0),
+			def:  ScaleDefMap[NaturalMinorScale],
+			note: midi.KeyInt("D#", 3),
+			want: 1, // index 1
+		},
+		{
+			name: "out of scale key in D# Minor",
+			root: midi.KeyInt("D#", 0),
+			def:  ScaleDefMap[NaturalMinorScale],
+			note: midi.KeyInt("C", 3),
+			want: 0, // not there
+		},
+		{
+			name: "F# in D# Minor",
+			root: midi.KeyInt("D#", 0),
+			def:  ScaleDefMap[NaturalMinorScale],
+			note: midi.KeyInt("F#", 3),
+			want: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &Scale{
+				Root: tt.root,
+				Def:  tt.def,
+			}
+			if got := s.IndexOfNote(tt.note); got != tt.want {
+				t.Errorf("Scale.IndexOfNote(%d/%s) = %v, want %v", tt.note, midi.NoteToName(tt.note), got, tt.want)
+			}
+		})
+	}
+}

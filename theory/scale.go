@@ -32,6 +32,28 @@ func (s *Scale) AdjustedNote(note int) int {
 	return note + s.OffsetForNote(note)
 }
 
+// Notes returns the notes in the scale. The return data contains the
+// note numbers (0-11)
+func (s *Scale) Notes() []int {
+	ints, _ := ScaleNotes(midi.Notes[s.Root%12], s.Def.Name)
+	return ints
+}
+
+// IndexOfNote returns the position of the note in the scale starting at index 1.
+func (s *Scale) IndexOfNote(note int) int {
+	if s == nil {
+		return 0
+	}
+	notes := s.Notes()
+	note = note % 12
+	for i, n := range notes {
+		if n == note {
+			return i + 1
+		}
+	}
+	return 0
+}
+
 // TriadChordForRoot returns the triad chord (3 note) matching the passed root.
 func (s *Scale) TriadChordForRoot(note int) *Chord {
 	return s.chordForRoot(note, 3)

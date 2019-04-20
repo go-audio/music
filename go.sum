@@ -1,0 +1,3 @@
+github.com/go-audio/midi v1.0.0 h1:50zbE5RwJxfwYdOYMqIhdhcTnfqmGPuKm5j5g6ethik=
+github.com/go-audio/midi v1.0.0/go.mod h1:PoFcd6KPFUn++NHd1libpb/WifNIb/qKVvZ71McMVmo=
+github.com/mattetti/filebuffer v1.0.0/go.mod h1:X6nyAIge2JGVmuJt2MFCqmHrb/5IHiphfHtot0s5cnI=
