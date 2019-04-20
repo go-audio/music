@@ -1,5 +1,9 @@
 package theory
 
+import (
+	"strconv"
+)
+
 var scaleDegreeNames = []string{
 	"Tonic",
 	"Supertonic",
@@ -21,6 +25,31 @@ func ScaleDegreeName(pos int) string {
 		return "Tonic (octave)"
 	}
 	return scaleDegreeNames[pos]
+}
+
+// OrdinalPositionName returns the ordinal name of an index 0 position.
+// 1st, 2nd, 3rd, 4th, 5th etc.
+func OrdinalPositionName(pos int) string {
+	cardinal := pos + 1
+	if cardinal < 1 {
+		return "invalid position"
+	}
+	suffix := "th"
+	switch cardinal % 10 {
+	case 1:
+		if cardinal%100 != 11 {
+			suffix = "st"
+		}
+	case 2:
+		if cardinal%100 != 12 {
+			suffix = "nd"
+		}
+	case 3:
+		if cardinal%100 != 13 {
+			suffix = "rd"
+		}
+	}
+	return strconv.Itoa(cardinal) + suffix
 }
 
 func sliceIndex(limit int, predicate func(i int) bool) int {
