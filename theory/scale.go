@@ -137,10 +137,10 @@ func (scales Scales) Popular() Scales {
 // EligibleScalesForNotes returns a slice of scales that would satisfy the passed notes.
 func EligibleScalesForNotes(notes []int) Scales {
 	// remove duplicates and -1s
-	uNoteMap := map[int]bool{}
+	uNoteMap := map[int]int{}
 	for _, n := range notes {
 		if n >= 0 {
-			uNoteMap[n%12] = true
+			uNoteMap[n%12]++
 		}
 	}
 	uNotes := make([]int, len(uNoteMap))
@@ -176,6 +176,10 @@ func EligibleScalesForNotes(notes []int) Scales {
 		scaleList[i] = scales[name]
 	}
 
-	sort.Slice(scaleList, func(i, j int) bool { return scaleList[i].String() < scaleList[i].String() })
+	// reverse sort based on the most times the root/tonic was played
+	// TODO: add other sorting rules
+	sort.Slice(scaleList, func(i, j int) bool {
+		return uNoteMap[scaleList[i].Root] > uNoteMap[scaleList[j].Root]
+	})
 	return scaleList
 }

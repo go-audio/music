@@ -49,7 +49,7 @@ func TestChord_Def(t *testing.T) {
 		toString string
 	}{
 		{
-			name: "unordered chord",
+			name: "tonic an actave up",
 			keys: []int{
 				midi.KeyInt("F#", 3),
 				midi.KeyInt("A", 3),
@@ -202,7 +202,38 @@ func TestChord_Def(t *testing.T) {
 				midi.KeyInt("E", 3),
 			},
 			want:     "A Major Seventh",
-			toString: `A Major Seventh - "A2, C#3, E3, G#3, G#2"`,
+			toString: `A Major Seventh - "A2, C#3, E3, G#2, G#3"`,
+		},
+		{
+			name: "Bmin7 unordered",
+			keys: []int{
+				midi.KeyInt("B", 0),
+				midi.KeyInt("D", 1),
+				midi.KeyInt("F#", 1),
+				midi.KeyInt("A", 1),
+			},
+			want:     "B Minor Seventh",
+			toString: `B Minor Seventh - "B0, D1, F#1, A1"`,
+		},
+		{
+			name: "A# Aug",
+			keys: []int{
+				midi.KeyInt("A", 1),
+				midi.KeyInt("C#", 1),
+				midi.KeyInt("F", 1),
+			},
+			want:     "A Augmented",
+			toString: `A Augmented - "A1, C#1, F1"`,
+		},
+		{
+			name: "C# Aug",
+			keys: []int{
+				midi.KeyInt("C#", 1),
+				midi.KeyInt("A", 1),
+				midi.KeyInt("F", 1),
+			},
+			want:     "C# Augmented",
+			toString: `C# Augmented - "C#1, F1, A1"`,
 		},
 	}
 	for _, tt := range tests {
@@ -214,7 +245,7 @@ func TestChord_Def(t *testing.T) {
 			if got != tt.want {
 				expChord := NewChordFromAbbrev(tt.want)
 				if expChord == nil {
-					t.Fatalf("Can't find the wanted chord abbrev %v\n", tt.want)
+					t.Fatalf("Can't find the wanted chord abbrev, change thr tt.want value %v\n", tt.want)
 				}
 				t.Logf("Expected chord intervals: %v\n", expChord.Intervals())
 				t.Logf("Got chord intervals: %v\n", c.Intervals())

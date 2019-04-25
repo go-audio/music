@@ -16,6 +16,7 @@ type Chord struct {
 	// KeyIntervals are the half steps between each key, in most cases, you want to use Intervals().
 	KeyIntervals     []uint
 	intervalKeyCache []int
+	_isSorted        bool
 }
 
 // NewChordFromAbbrev takes a chord name such as Bmin and converts it to a *Chord
@@ -76,8 +77,11 @@ func (c *Chord) String() string {
 		strings.Join(strs, ", "))
 }
 
-// Def returns the matching chord definition with the root set if found.
-// A chord definition with a name set to Unknown will be returned if no matches found.
+// Def returns the matching chord definition with the root set if found. A chord
+// definition with a name set to Unknown will be returned if no matches found.
+// If a chord definition is found but with the notes in a different order, the
+// keys will be re-ordered.
+// Note that a chord could have multiple definitions, this is the best guest found.
 func (c *Chord) Def() *ChordDefinition {
 	if c == nil {
 		return nil
@@ -85,28 +89,84 @@ func (c *Chord) Def() *ChordDefinition {
 	var sorted bool
 	// TODO: consider caching this result
 
-	// TODO: look at the keys without the registers first
-	retries := len(c.Keys)
+	analyzedChord := c
+
+	retries := len(analyzedChord.Keys)
 	for retries > 0 {
 		for _, chordDef := range ChordDefs {
-			if c.Matches(chordDef) {
-				return chordDef.WithRoot(midi.Notes[c.Keys[0]%12])
+			if analyzedChord.Matches(chordDef) {
+				if analyzedChord != c {
+					copy(c.Keys, analyzedChord.Keys)
+				}
+				return chordDef.WithRoot(midi.Notes[analyzedChord.Keys[0]%12])
 			}
 		}
 		// we didn't find the chord, let's try to change the interval orders
-		if len(c.Keys) < 2 {
+
+		if len(analyzedChord.Keys) < 2 {
 			break
 		}
+		// sort the keys and retry
 		if !sorted {
-			sort.Ints(c.Keys)
+			analyzedChord = analyzedChord.SortedByKeys()
 			sorted = true
 			continue
 		}
-		c.Keys = append(c.Keys[1:], c.Keys[0])
+		// we still don't have a match so we rotate the keys
+		analyzedChord.Keys = append(analyzedChord.Keys[1:], analyzedChord.Keys[0])
 		retries--
 	}
 
 	return &ChordDefinition{Name: "Unknown"}
+}
+
+// TODO: PossibleDefs
+
+// SortedByKeys returns a copy of the chord but with the chord keys by pitch (lowest first)
+func (c *Chord) SortedByKeys() *Chord {
+	newChord := &Chord{_isSorted: true}
+	// sorting the keys which might lead to issues with inversions
+	sortedKeys := c.Keys
+	sort.Slice(sortedKeys, func(i, j int) bool { return sortedKeys[i]%12 < sortedKeys[j]%12 })
+	newChord.Keys = sortedKeys
+	return newChord
+	/*
+		sort.Ints(sortedKeys)
+
+		// remove duplicate notes (including those played on different octaves)
+		seenKeys := map[int]bool{}
+		var pitch int
+		for _, k := range c.Keys {
+			pitch = k % 12
+			if _, ok := seenKeys[pitch]; !ok {
+				seenKeys[k] = true
+			}
+		}
+
+		indexOf := func(x int, list []int) int {
+			for i, k := range list {
+				if k%12 == x {
+					return i
+				}
+			}
+			return -1
+		}
+
+		// reorder
+		newChord.Keys = make([]int, len(c.Keys))
+		for pitch := range seenKeys {
+			newChord.Keys[indexOf(pitch, sortedKeys)] = pitch
+		}
+		return newChord
+	*/
+}
+
+// IsSorted checks if the keys of the chord are sorted
+func (c *Chord) isSorted() bool {
+	if c._isSorted {
+		return true
+	}
+	return sort.IntsAreSorted(c.Keys)
 }
 
 // Matches compares the current chord with the passed chord.
