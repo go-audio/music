@@ -4,16 +4,14 @@ import (
 	"github.com/go-audio/midi"
 )
 
-// ScaleDefinition defines a scale by giving it a name and the spacing between adjacent notes on the chromatic scale.
+// ScaleDefinition defines a scale name, is it a modal and if yes, it's parent mode.
+// Also holds the scale breakdown in half-tones and caches the intervals.
+// Doesn't support other systems than western for now.
 type ScaleDefinition struct {
-	// Popular indicates that the scale is commonly used
-	Popular bool
-	// Greek mode scale
-	Greek     bool
-	Name      ScaleName
-	HalfSteps []int
-	// InScale indicate what notes are in and which aren't
-	InScale     [12]bool
+	isModal     bool
+	ParentScale ScaleName
+	Name        ScaleName
+	HalfSteps   []int
 	_scaleNotes []int // cache
 }
 
@@ -34,45 +32,46 @@ func (def ScaleDefinition) NotesInScale() []int {
 // ScaleDefinitions is a type representing slice of scale definitions
 type ScaleDefinitions []ScaleDefinition
 
-// Popular filter down to only return the popular scales found
-func (def ScaleDefinitions) Popular() ScaleDefinitions {
-	out := ScaleDefinitions{}
-	for _, scale := range def {
-		if scale.Popular {
-			out = append(out, scale)
-		}
-	}
-	return out
-}
-
 // ScaleName is the English name of the scale
 type ScaleName string
 
+// Scales Below are grouped by modes derivated from ionian, harmonic minor, melodic minor
+// and the ones that are outside of modal system.
+// Using S as Sharp (#) indicator for now.
 const (
-	MajorScale        ScaleName = "Major"
-	NaturalMinorScale ScaleName = "Natural Minor"
+	Ionian     ScaleName = "Ionian"
+	Dorian     ScaleName = "Dorian"
+	Phrygian   ScaleName = "Phrygian"
+	Lydian     ScaleName = "Lydian"
+	Mixolydian ScaleName = "Mixolydian"
+	Aeolian    ScaleName = "Aeolian"
+	Locrian    ScaleName = "Locrian"
 
-	HarmonicMinorScale   ScaleName = "Harmonic Minor"
-	MelodicMinorScale    ScaleName = "Melodic Minor"
-	WholeToneScale       ScaleName = "Whole Tone"
-	DiminishedScale      ScaleName = "Diminished"
-	MajorPentatonicScale ScaleName = "Major Pentatonic"
-	MinorPentatonicScale ScaleName = "Minor Pentatonic"
-	JapInSenScale        ScaleName = "Jap In Sen"
-	MajorBebopScale      ScaleName = "Major Bebop"
-	DominantBebopScale   ScaleName = "Dominant Bebop"
-	BluesScale           ScaleName = "Blues"
-	ArabicScale          ScaleName = "Arabic"
-	EnigmaticScale       ScaleName = "Enigmatic"
-	NeapolitanScale      ScaleName = "Neapolitan"
-	NeapolitanMinorScale ScaleName = "Neapolitan Minor"
-	HungarianMinorScale  ScaleName = "Hungarian Minor"
-	DorianScale          ScaleName = "Dorian"
-	PhrygianScale        ScaleName = "Phrygian"
-	LydianScale          ScaleName = "Lydian"
-	MixolydianScale      ScaleName = "Mixolydian"
-	// LocrianScale represents the Locrian, or Hypodorian track https://en.wikipedia.org/wiki/Locrian_mode
-	LocrianScale ScaleName = "Locrian"
+	HarmonicMinor    ScaleName = "HarmonicMinor"
+	LocrianS6        ScaleName = "LocrianS6"
+	IonianS5         ScaleName = "IonianS5"
+	DorianS4         ScaleName = "DorianS4"
+	PhrygianDominant ScaleName = "PhrygianDominant"
+	LydianS2         ScaleName = "LydianS2"
+	SuperLocrian     ScaleName = "SuperLocrian"
+
+	MelodicMinor    ScaleName = "MelodicMinor"
+	Dorianb2        ScaleName = "Dorianb2"
+	LydianAugmented ScaleName = "LydianAugmented"
+	LydianDominant  ScaleName = "LydianDominant"
+	Mixolydianb6    ScaleName = "Mixolydianb6"
+	Aeolianb5       ScaleName = "Aeolianb5"
+	Altered         ScaleName = "Altered"
+
+	WholeTone       ScaleName = "WholeTone"
+	Blues           ScaleName = "Blues"
+	MinorPentatonic ScaleName = "MinorPentatonic"
+	MajorPentatonic ScaleName = "MajorPentatonic"
+	Diminished      ScaleName = "Diminished"
+	MajorBebop      ScaleName = "MajorBebop"
+	MinorBebop      ScaleName = "MinorBebop"
+	DominantBebop   ScaleName = "DominantBebop"
+	Arabic          ScaleName = "Arabic"
 )
 
 var (
