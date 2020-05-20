@@ -123,17 +123,6 @@ func (s *Scale) String() string {
 // Scales is a slice of scales
 type Scales []Scale
 
-// Popular filter down to only return the popular scales
-func (scales Scales) Popular() Scales {
-	out := Scales{}
-	for _, scale := range scales {
-		if scale.Def.Popular {
-			out = append(out, scale)
-		}
-	}
-	return out
-}
-
 // EligibleScalesForNotes returns a slice of scales that would satisfy the passed notes.
 func EligibleScalesForNotes(notes []int) Scales {
 	// remove duplicates and -1s
