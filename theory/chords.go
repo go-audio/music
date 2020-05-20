@@ -145,7 +145,7 @@ func (chords Chords) ProgressionDesc() string {
 	}
 	out += "\n"
 	//get the possible scales for the root notes
-	scales := EligibleScalesForNotes(notes).Popular()
+	scales := EligibleScalesForNotes(notes)
 	for _, scale := range scales {
 		scaleNotes, _ := ScaleNotes(midi.Notes[scale.Root%12], scale.Def.Name)
 		romanScale := RomanNumerals[scale.Def.Name]

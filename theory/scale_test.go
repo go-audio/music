@@ -19,7 +19,7 @@ func TestScale_String(t *testing.T) {
 	}{
 		{
 			name:   "C Major",
-			fields: fields{Root: 60, Def: ScaleDefMap[MajorScale]},
+			fields: fields{Root: 60, Def: ScaleDefMap[Ionian]},
 			want:   "C Major",
 		},
 	}
@@ -38,10 +38,9 @@ func TestScale_String(t *testing.T) {
 
 func TestEligibleScalesForNotes(t *testing.T) {
 	tests := []struct {
-		name    string
-		notes   []int
-		popular bool
-		want    Scales
+		name  string
+		notes []int
+		want  Scales
 	}{
 		{"C Major",
 			[]int{
@@ -51,18 +50,14 @@ func TestEligibleScalesForNotes(t *testing.T) {
 				midi.KeyInt("G", 3),
 				midi.KeyInt("F", 3),
 			},
-			true,
 			Scales{
-				{Root: 0, Def: ScaleDefMap[MajorScale]},
+				{Root: 0, Def: ScaleDefMap[Ionian]},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := EligibleScalesForNotes(tt.notes)
-			if tt.popular {
-				got = got.Popular()
-			}
 			for _, s := range got {
 				t.Logf("%s\n", s.String())
 			}
@@ -84,7 +79,7 @@ func TestScale_OffsetForNote(t *testing.T) {
 			name: "3rd octave on C Major scale",
 			scale: &Scale{
 				Root: midi.KeyInt("C", 3) % 12,
-				Def:  ScaleDefMap[MajorScale],
+				Def:  ScaleDefMap[Ionian],
 			},
 			inputNotes: []int{60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71},
 			want:       []int{0, -1, 0, -1, 0, 0, -1, 0, -1, 0, -1, 0},
@@ -93,7 +88,7 @@ func TestScale_OffsetForNote(t *testing.T) {
 			name: "3rd octave on C# Major scale",
 			scale: &Scale{
 				Root: midi.KeyInt("C#", 3) % 12,
-				Def:  ScaleDefMap[MajorScale],
+				Def:  ScaleDefMap[Ionian],
 			},
 			inputNotes: []int{60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71},
 			want:       []int{0, 0, -1, 0, -1, 0, 0, -1, 0, -1, 0, -1},
@@ -102,7 +97,7 @@ func TestScale_OffsetForNote(t *testing.T) {
 			name: "3rd octave on C Minor scale",
 			scale: &Scale{
 				Root: midi.KeyInt("C", 3) % 12,
-				Def:  ScaleDefMap[NaturalMinorScale],
+				Def:  ScaleDefMap[Aeolian],
 			},
 			inputNotes: []int{60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71},
 			want:       []int{0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, -1},
@@ -130,7 +125,7 @@ func TestScale_AdjustedNote(t *testing.T) {
 			name: "3rd octave on C Major",
 			scale: &Scale{
 				Root: midi.KeyInt("C", 3),
-				Def:  ScaleDefMap[MajorScale],
+				Def:  ScaleDefMap[Ionian],
 			},
 			inputNotes: []int{60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71},
 			want:       []int{60, 60, 62, 62, 64, 65, 65, 67, 67, 69, 69, 71},
@@ -157,14 +152,14 @@ func TestScale_TriadChordForRoot(t *testing.T) {
 	}{
 		{
 			name:          "C3 in C Major",
-			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[Ionian]},
 			inputNote:     midi.KeyInt("C", 3),
 			want:          &Chord{Keys: []int{60, 64, 67}},
 			wantChordName: "C Major",
 		},
 		{
 			name:          "C3 in C Minor",
-			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[Aeolian]},
 			inputNote:     midi.KeyInt("C", 3),
 			want:          &Chord{Keys: []int{60, 63, 67}},
 			wantChordName: "C Minor",
@@ -193,14 +188,14 @@ func TestScale_SeventhChordForRoot(t *testing.T) {
 	}{
 		{
 			name:          "C3 in C Major",
-			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[Ionian]},
 			inputNote:     midi.KeyInt("C", 3),
 			want:          &Chord{Keys: []int{60, 64, 67, 71}},
 			wantChordName: "C Major Seventh",
 		},
 		{
 			name:          "C3 in C Minor",
-			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[Aeolian]},
 			inputNote:     midi.KeyInt("C", 3),
 			want:          &Chord{Keys: []int{60, 63, 67, 70}},
 			wantChordName: "C Minor Seventh",
@@ -229,14 +224,14 @@ func TestScale_NinthChordForRoot(t *testing.T) {
 	}{
 		{
 			name:          "C3 in C Major",
-			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[MajorScale]},
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[Ionian]},
 			inputNote:     midi.KeyInt("C", 3),
 			want:          &Chord{Keys: []int{60, 64, 67, 71, 74}},
 			wantChordName: "C Major Ninth",
 		},
 		{
 			name:          "C3 in C Minor",
-			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[NaturalMinorScale]},
+			scale:         &Scale{Root: midi.KeyInt("C", 3) % 12, Def: ScaleDefMap[Aeolian]},
 			inputNote:     midi.KeyInt("C", 3),
 			want:          &Chord{Keys: []int{60, 63, 67, 70, 74}},
 			wantChordName: "C Minor Ninth",
@@ -265,13 +260,13 @@ func TestScale_Notes(t *testing.T) {
 		{
 			name: "C Major",
 			root: 0,
-			def:  ScaleDefMap[MajorScale],
+			def:  ScaleDefMap[Ionian],
 			want: []int{0, 2, 4, 5, 7, 9, 11},
 		},
 		{
 			name: "D# Minor",
 			root: 3,
-			def:  ScaleDefMap[NaturalMinorScale],
+			def:  ScaleDefMap[Aeolian],
 			want: []int{3, 5, 6, 8, 10, 11, 1},
 		},
 	}
@@ -299,21 +294,21 @@ func TestScale_IndexOfNote(t *testing.T) {
 		{
 			name: "D# 3 in D# Minor",
 			root: midi.KeyInt("D#", 0),
-			def:  ScaleDefMap[NaturalMinorScale],
+			def:  ScaleDefMap[Aeolian],
 			note: midi.KeyInt("D#", 3),
 			want: 0, // index 0
 		},
 		{
 			name: "out of scale key in D# Minor",
 			root: midi.KeyInt("D#", 0),
-			def:  ScaleDefMap[NaturalMinorScale],
+			def:  ScaleDefMap[Aeolian],
 			note: midi.KeyInt("C", 3),
 			want: -1, // not there
 		},
 		{
 			name: "F# in D# Minor",
 			root: midi.KeyInt("D#", 0),
-			def:  ScaleDefMap[NaturalMinorScale],
+			def:  ScaleDefMap[Aeolian],
 			note: midi.KeyInt("F#", 3),
 			want: 2,
 		},

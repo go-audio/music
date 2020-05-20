@@ -12,6 +12,7 @@ type ScaleDefinition struct {
 	isModal     bool
 	ParentScale ScaleName
 	HalfSteps   []int
+	InScale     [12]bool
 	_scaleNotes []int // cache
 }
 

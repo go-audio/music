@@ -14,17 +14,17 @@ func TestScaleNotes(t *testing.T) {
 		wantNames []string
 	}{
 		{
-			name: "C Major", tonic: "c", scale: MajorScale,
+			name: "C Major", tonic: "c", scale: Ionian,
 			wantKeys:  []int{0, 2, 4, 5, 7, 9, 11},
 			wantNames: []string{`C`, `D`, `E`, `F`, `G`, `A`, `B`},
 		},
 		{
-			name: "C melodic Minor", tonic: "C", scale: MelodicMinorScale,
+			name: "C melodic Minor", tonic: "C", scale: MelodicMinor,
 			wantKeys:  []int{0, 2, 3, 5, 7, 9, 11},
 			wantNames: []string{`C`, `D`, `D#`, `F`, `G`, `A`, `B`},
 		},
 		{
-			name: "B Major", tonic: "b", scale: MajorScale,
+			name: "B Major", tonic: "b", scale: Ionian,
 			wantKeys:  []int{11, 1, 3, 4, 6, 8, 10},
 			wantNames: []string{`B`, `C#`, `D#`, `E`, `F#`, `G#`, `A#`},
 		},
@@ -43,7 +43,7 @@ func TestScaleNotes(t *testing.T) {
 }
 
 func TestScaleDefMap(t *testing.T) {
-	if ScaleDefMap[MajorScale].InScale != [12]bool{true, false, true, false, true, true, false, true, false, true, false, true} {
+	if ScaleDefMap[Ionian].InScale != [12]bool{true, false, true, false, true, true, false, true, false, true, false, true} {
 		t.Fatalf("Expected the major scale to list notes that are in or out of the scale")
 	}
 }
@@ -56,12 +56,12 @@ func TestScaleDefinition_NotesInScale(t *testing.T) {
 	}{
 		{
 			name: "Major",
-			def:  ScaleDefMap[MajorScale],
+			def:  ScaleDefMap[Ionian],
 			want: []int{0, 2, 4, 5, 7, 9, 11},
 		},
 		{
 			name: "Minor",
-			def:  ScaleDefMap[NaturalMinorScale],
+			def:  ScaleDefMap[Aeolian],
 			want: []int{0, 2, 3, 5, 7, 8, 10},
 		},
 	}
